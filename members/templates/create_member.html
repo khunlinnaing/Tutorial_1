@@ -1,0 +1,102 @@
+{% extends "index.html" %}
+{% block title %}Create Member{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h4 class="text-center">Create Page</h4>
+    <form method="POST" action="create" autocomplete="off" class="create-form">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="firstname" class="form-label">First Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control firstname" name="firstname" id="firstname" placeholder="Please enter your first name.">
+            <div class="requirement">
+                <p class="firstname text-danger"></p>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="lastname" class="form-label">Last Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control lastname" name="lastname"id="lastname" placeholder="Please enter your last name.">
+            <div class="requirement">
+                <p class="lastname text-danger"></p>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+            <input type="text" class="form-control phone" name="phone" id="phone" placeholder="Please enter your phone.">
+            <div class="requirement">
+                <p class="phone text-danger"></p>
+            </div>
+        </div>
+        <!-- <a href="{% url 'index' %}" class="btn btn-success">Save</a> -->
+    </form>
+    <button class="btn btn-primary create-save-btn">Save</button>
+    <a href="{% url 'index' %}" class="btn btn-danger">Back</a>
+</div>
+
+
+<!-- Add Bootstrap CSS and JS files to your HTML -->
+
+<!-- Button to trigger the modal -->
+<button type="button" class="btn btn-primary popup-btn" data-bs-toggle="modal" data-bs-target="#myModal" style="display: none;">
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Error</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="error-message"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-label="Close">Close</button>
+          </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Bootstrap JS at the end of your HTML -->
+<script>
+    $(document).ready(function(){
+        $(".create-save-btn").click(function(){
+            var firstname= $(".firstname").val();
+            var lastname= $(".lastname").val();
+            var phone= $(".phone").val();
+            var phone_vali = /^[0-9]+$/;
+            $("div.requirement").children("p.firstname,p.lastname,p.phone").text("");
+            if(firstname == "" && lastname == "" && phone ==""){
+                $("div.requirement").children("p.firstname,p.lastname,p.phone").text("* Require field.");
+            }
+            else if(firstname == ""){
+                $("div.requirement").children("p.firstname").text("* Require field.");
+            }else if(lastname == ""){
+                $("div.requirement").children("pp.lastname").text("* Require field.");
+            }else if(phone == ""){
+                $("div.requirement").children("p.phone").text("* Require field.");
+            }else if(!phone_vali.test(phone)){
+                $("div.requirement").children("p.phone").text("* Please enter phone number 0 to 9");
+            }else if(phone.length <8 || phone.length > 13){
+                $("div.requirement").children("p.phone").text("* Please enter phone minimal 8 and max 14 charactor.");
+            }else{
+                console.log("testing");
+                $("form.create-form").submit();
+            }
+        });
+    });
+</script>
+{% for message in messages %}
+    {% if message.tags == 'error' %}
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script>
+            var m = "{{ message }}";
+            // swal("Dein !", m, 'error',{ allowEscapeKey: false,});
+            $(document).ready(function(){
+                $(".popup-btn").click();
+                $(".error-message").text(m);
+            });
+        </script>
+    {% endif %}
+{% endfor %}
+{% endblock %}
